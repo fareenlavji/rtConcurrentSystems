@@ -95,64 +95,68 @@ All 20 drones assembled. Mission complete!
 ## 6. UML Diagrams
 ### 6.1. Class Diagram
 ```mermaid
-  classDiagram
-  direction LR
+ classDiagram
+ direction LR
 
-  class Component {
-      <<enumeration>>
-      FRAME
-      PROPULSION
-      FIRMWARE
-  }
+ class Component {
+  <<enumeration>>
+  FRAME
+  PROPULSION
+  FIRMWARE
+ }
 
-  class AssemblyMonitor {
-      - c1 : Component
-      - c2 : Component
-      - missing : Component
-      - tableOccupied : boolean
-      - assembledCount : int
-      - maxDrones : int
-      + AssemblyMonitor(maxDrones: int)
-      + placeComponents(comp1: Component, comp2: Component) void
-      + waitForTurn(myComponent: Component) boolean
-      + completeAssembly() void
-      + isDone() boolean
-      + getAssembledCount() int
-      + getMissing() Component
-  }
+ class AssemblyMonitor {
+  <<monitor>>
+  - c1 : Component
+  - c2 : Component
+  - missing : Component
+  - tableOccupied : boolean
+  - assembledCount : int
+  - maxDrones : int
+  + AssemblyMonitor(maxDrones: int)
+  + placeComponents(comp1: Component, comp2: Component) void
+  + waitForTurn(myComponent: Component) boolean
+  + completeAssembly() void
+  + isDone() boolean
+  + getAssembledCount() int
+  + getMissing() Component
+ }
 
-  class Agent {
-      - monitor : AssemblyMonitor
-      + Agent(monitor: AssemblyMonitor)
-      + run() void
-  }
+ class Agent {
+  <<runnable>>
+  - monitor : AssemblyMonitor
+  + Agent(monitor: AssemblyMonitor)
+  + run() void
+ }
 
-  class Technician {
-      <<abstract>>
-      # monitor : AssemblyMonitor
-      # myComponent : Component
-      + Technician(monitor: AssemblyMonitor, myComponent: Component)
-      + run() void
-  }
+ class Technician {
+  <<abstract>>
+  # monitor : AssemblyMonitor
+  # myComponent : Component
+  + Technician(monitor: AssemblyMonitor, myComponent: Component)
+  + run() void
+ }
 
-  class FrameTechnician {
-      + FrameTechnician(monitor: AssemblyMonitor)
-  }
+ class FrameTechnician {
+  + FrameTechnician(monitor: AssemblyMonitor)
+ }
 
-  class PropulsionTechnician {
-      + PropulsionTechnician(monitor: AssemblyMonitor)
-  }
+ class PropulsionTechnician {
+  + PropulsionTechnician(monitor: AssemblyMonitor)
+ }
 
-  class ControlFirmwareTechnician {
-      + ControlFirmwareTechnician(monitor: AssemblyMonitor)
-  }
+ class ControlFirmwareTechnician {
+  + ControlFirmwareTechnician(monitor: AssemblyMonitor)
+ }
 
-  Agent --> AssemblyMonitor : uses
-  Technician --> AssemblyMonitor : uses
+ Agent --> AssemblyMonitor : uses
+ Technician --> AssemblyMonitor : uses
 
-  Technician <|-- FrameTechnician
-  Technician <|-- PropulsionTechnician
-  Technician <|-- ControlFirmwareTechnician
+ Technician <|-- FrameTechnician
+ Technician <|-- PropulsionTechnician
+ Technician <|-- ControlFirmwareTechnician
+
+ note for AssemblyMonitor "Invariant: tableOccupied == true => exactly two components (c1,c2) are set and missing is the third"
 ```
 ### 6.2. Sequence Diagram
 ```mermaid
