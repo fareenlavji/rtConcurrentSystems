@@ -24,7 +24,7 @@ _SYSC3303A • RTConcurrentSys • WINTER2026 • Assignment02_
 
 ## 2. File Structure
 ### 2.1. Recommended layout
-```mermaid
+```
 ├── src/
   ├── Client.java
   ├── Router.java
