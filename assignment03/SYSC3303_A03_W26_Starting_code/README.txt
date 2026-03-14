@@ -107,7 +107,7 @@ Yellow Phase (2 ticks):
 Walk Phase (3 ticks):
   • Pedestrians receive WALK signal
   • Vehicles receive RED signal
-Pedestrian Flashing (6 ticks):
+Pedestrian Flashing (7 ticks):
   • Pedestrian signal alternates between DONT_WALK_ON and DONT_WALK_OFF
   • Vehicles receive RED signal
   • After flashing completes, cycle returns to vehicle green
