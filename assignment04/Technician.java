@@ -33,7 +33,7 @@ public class Technician implements Runnable {
         System.out.println("[" + Thread.currentThread().getName() + "] Waiting for remaining components...");
         while (this.assemblyTable.getDronesAssembled() != 20){   //Will loop until 20 drones have been assembled
             this.assemblyTable.getComponents(this.components); //Attempts to obtain the missing components for the Technician (if obtained, drone is assembled)
-            // Sleep for between 0 and 5 seconds before calculating n!
+            // Sleep for a random time between 0 and 5 seconds to simulate assembly time
             try {
                 Thread.sleep((int)(Math.random() * 5000));
             } catch (InterruptedException e) {}
