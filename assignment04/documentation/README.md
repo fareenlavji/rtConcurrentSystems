@@ -365,8 +365,8 @@ Include the following:
 - `documentation\README.txt`
 - `documentation\README.md`
 - `documentation\README.pdf`
-- `umlDiagrams\MaxDrone_Looped_SequenceDiagram.png`
-- `umlDiagrams\SingleRun_SequenceDiagram.png`
+- `umlDiagrams\UML_Sequence_Diagram_With_Loop.png`
+- `umlDiagrams\UML_Sequence_Diagram_No_Loop.png`
 - `umlDiagrams\UML_Class_Diagram.png`
 ### 2.2. Primary Executables
 Run in this order:
