@@ -186,6 +186,29 @@ classDiagram
   AssemblyTable ..> EventLogger : calls logEvent(...)
 ```
 ## 4.2. Sequence Diagrams
+### 4.2.1 Single Assembly Cycle (No Loop)
+```mermaid
+  sequenceDiagram
+  autonumber
+  participant A as Agent
+  participant T as Technician
+  participant M as AssemblyTable
+  participant L as EventLogger
+
+  A->>M: addComponents(c1, c2)
+  M-->>L: logEvent(PLACED_COMPONENTS)
+  M-->>L: logEvent(TABLE_FULL)
+  M-->>T: notifyAll()
+
+  T->>M: getComponents(owns)
+  M-->>L: logEvent(PICKED_UP)
+  M-->>L: logEvent(DRONE_ASSEMBLED)
+  M-->>L: logEvent(TABLE_EMPTY)
+  M-->>A: notifyAll()
+
+  A->>L: WORK_START / WORK_END
+  T->>L: WORK_START / WORK_END
+```
 ### 4.2.1 One Assembly Cycle (Loop Notation)
 ```mermaid
 sequenceDiagram
