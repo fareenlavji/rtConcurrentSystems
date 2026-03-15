@@ -1,5 +1,4 @@
 # DRONE ASSEMBLY LINE — LOGGING & METRICS SYSTEM
-
 _SYSC3303A • RTConcurrentSys • WINTER2026 • Assignment04_
 
 ## 1. Simplified Deliverable Requirements
@@ -209,7 +208,7 @@ classDiagram
   A->>L: WORK_START / WORK_END
   T->>L: WORK_START / WORK_END
 ```
-### 4.2.1 One Assembly Cycle (Loop Notation)
+### 4.2.2 One Assembly Cycle (Looped Notation)
 ```mermaid
 sequenceDiagram
     autonumber

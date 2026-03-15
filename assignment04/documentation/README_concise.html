@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Drone Assembly Line — Logging & Metrics (Concise)</title>
+<style>
+  body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif; margin:28px; color:#222}
+  h1,h2,h3{margin:0.4em 0}
+  .subtle{color:#555}
+  .grid{display:grid; grid-template-columns:1fr; gap:18px}
+  figure{margin:0}
+  figcaption{font-size:12px;color:#555;margin-top:6px}
+  img{max-width:100%; height:auto; border:1px solid #ddd; box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  .hr{height:1px;background:#e5e5e5;margin:18px 0}
+  ul{margin:6px 0 0 22px}
+  code,kbd{background:#f6f8fa; padding:2px 4px; border-radius:4px}
+</style>
+</head>
+<body>
+<h1>DRONE ASSEMBLY LINE — LOGGING &amp; METRICS SYSTEM</h1>
+<div class="subtle">SYSC 3303A W2026 • Dr. Rami Sabouni • Assignment 4</div>
+<div class="hr"></div>
+
+<h2>Overview</h2>
+<ul>
+  <li>Agent places two components; three Technicians assemble drones from the other two.</li>
+  <li>AssemblyTable is the monitor coordinating <code>wait()</code>/<code>notifyAll()</code>.</li>
+  <li>EventLogger is a daemonized, buffered singleton; run‑ID log file per run.</li>
+  <li>LogAnalyzer post‑processes the log → throughput, utilization, response times.</li>
+</ul>
+
+<h2>How to Run (IntelliJ)</h2>
+<ol>
+  <li>Run <code>AssemblyTable.main()</code>.</li>
+  <li>System stops, logger flushes; then <code>LogAnalyzer.main()</code> runs automatically.</li>
+  <li>Open <code>assembly_log_YYYYMMDD_HHMMSS.txt</code> and <code>metrics.txt</code>.</li>
+</ol>
+
+<h2>Key Log Format</h2>
+<pre>Event log: [yyyy-MM-dd HH:mm:ss.SSS , ENTITY , EVENT_CODE , key=value; key=value]</pre>
+<div class="subtle">Core events: WAIT_START/WAIT_END (monitor waits), PLACED_COMPONENTS, PICKED_UP, DRONE_ASSEMBLED, TABLE_FULL, TABLE_EMPTY, WORK_START/WORK_END, RESPONSE_TIME, SYSTEM_*.</div>
+
+<div class="hr"></div>
+
+<div class="grid">
+  <figure>
+    <img alt="UML Class Diagram" src="../umlDiagrams/UML_Class_Diagram.png"/>
+    <figcaption>Figure 1 — UML Class Diagram (Agent, Technician, AssemblyTable monitor, EventLogger, AssemblyLine driver)</figcaption>
+  </figure>
+  <figure>
+    <img alt="UML Sequence Diagram (Loop, Colour)" src="../umlDiagrams/UML_Sequence_Diagram_With_Loop.png"/>
+    <figcaption>Figure 2 — Sequence Diagram (loop until MAX_DRONES, coloured)</figcaption>
+  </figure>
+  <figure>
+    <img alt="UML Sequence Diagram (Simple)" src="../umlDiagrams/UML_Sequence_Diagram_No_Loop.png"/>
+    <figcaption>Appendix — Sequence Diagram (single cycle, simple)</figcaption>
+  </figure>
+</div>
+
+</body>
+</html>
