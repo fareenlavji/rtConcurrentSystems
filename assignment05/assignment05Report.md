@@ -29,26 +29,24 @@ gantt
     dateFormat  s
     axisFormat  %S
 
-    section P1 (T=8)
-    P1_1 :0, 3
+    section Process 1 (T=8)
+    P1: 0, 3
     IDLE: 3, 8
-    P1_2 :8, 11
+    P1: 8, 11
     IDLE: 11, 16
-    P1_3 :16, 19
+    P1: 16, 19
 
-    section P2 (T=12)
-    IDLE: 0, 3
-    P2_1 :3, 7
+    section Process 2 (T=12)
+    P2: 3, 7
     IDLE: 7, 12
-    P2_2 :12, 16
+    P2: 12, 16
 
-    section P3 (T=20)
-    IDLE: 0, 7
-    P3_1 :7, 8
+    section Process 3 (T=20)
+    P3: 7, 8
     IDLE: 8, 11
-    P3_2 :11, 12
+    P3: 11, 12
     IDLE: 12, 19
-    P3_3 :19, 20
+    P3: 19, 20
 ```
 ### Deadline Check
 | Process | Deadline  | Completion |
@@ -68,9 +66,12 @@ gantt
 | P4      | 100    | 15 | Lowest (L)   |
 ### Processor Utilization
 Utilization per process:
-- $$U_5 = 1 / 5 = 0.2000$$
-- $$U_6 = 10 / 25 = 0.4000$$
-- $$U_4 = 15 / 100 = 0.1500$$
+
+$$U_5 = 1 / 5 = 0.2000$$
+$$U_6 = 10 / 25 = 0.4000$$
+$$U_4 = 15 / 100 = 0.1500$$
+
+Total Utilization:
 
 $$U_{total} = \sum \frac{C_i}{T_i} = 0.2000 + 0.4000 + 0.1500 = 0.7500$$
 ### Will Deadlines Be Met?
@@ -105,32 +106,40 @@ gantt
     dateFormat  s
     axisFormat  %S
 
-    section P5 (T=5)
-    P5_1 :0, 1
-    IDLE  :1, 5
-    P5_2 :5, 6
-    IDLE  :6, 10
-    P5_3 :10, 11
-    IDLE  :11, 15
-    P5_4 :15, 16
-    IDLE  :16, 20
-    P5_5 :20, 21
-    IDLE  :21, 25
-    P5_6 :25, 26
-    IDLE  :26, 30
-    P5_7 :30, 31
-    IDLE  :31, 35
-    P5_8 :35, 36
-    IDLE  :36, 40
+    section Process 5 (T=5)
+    P5: 0, 1
+    IDLE: 1, 5
+    P5: 5, 6
+    IDLE: 6, 10
+    P5: 10, 11
+    IDLE: 11, 15
+    P5: 15, 16
+    IDLE: 16, 20
+    P5: 20, 21
+    IDLE: 21, 25
+    P5: 25, 26
+    IDLE: 26, 30
+    P5: 30, 31
+    IDLE: 31, 35
+    P5: 35, 36
 
-    section P6 (T=25)
-    IDLE  :0, 1
-    P6_1 :1, 25
-    IDLE  :25, 40
+    section Process 6 (T=25)
+    P6: 1, 5
+    IDLE: 5, 6
+    P6: 6, 10
+    IDLE: 10, 11
+    P6: 11, 15
+    IDLE: 15, 16
+    P6: 16, 20
+    IDLE: 20, 21
+    P6: 21, 25
 
-    section P4 (T=100)
-    IDLE  :0, 25
-    P4_1 :25, 40
+    section Process 4 (T=100)
+    P4: 26, 30
+    IDLE: 30, 31
+    P4: 31, 35
+    IDLE: 35, 36
+    P4: 36, 40
 ```
 #### Deadline Check
 | Process | Period |  Deadline(s)  | Completion Time(s) | Deadline Met? |
@@ -170,26 +179,26 @@ gantt
     dateFormat  s
     axisFormat  %S
 
-    section P9 (T=20)
-    P9_1 :0, 5
-    IDLE :5, 20
-    P9_2 :20, 25
-    IDLE :25, 40
-    P9_3 :40, 45
-    IDLE :45, 70
+    section Process 9 (T=20)
+    P9: 0, 5
+    IDLE: 5, 20
+    P9: 20, 25
+    IDLE: 25, 40
+    P9: 40, 45
+    IDLE: 45, 70
 
-    section P8 (T=40)
-    IDLE :0, 5
-    P8_1 :5, 15
-    IDLE :15, 45
-    P8_2 :45, 55
-    IDLE :55, 70
+    section Process 8 (T=40)
+    P8: 5, 15
+    IDLE: 15, 45
+    P8: 45, 55
+    IDLE: 55, 70
 
-    section P7 (T=70)
-    IDLE :0, 15
-    P7_1 :15, 35
-    IDLE :35, 55
-    P7_2 :55, 70
+    section Process 7 (T=70)
+    P7: 15, 20
+    IDLE: 20, 25
+    P7: 25, 35
+    IDLE: 35, 55
+    P7: 55, 70
 ```
 #### Deadline Check
 | Process | Deadline   | Completion |
