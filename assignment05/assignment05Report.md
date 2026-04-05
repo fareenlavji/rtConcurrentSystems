@@ -1,9 +1,11 @@
 # Rate Monotonic Scheduling
-_SYSC3303W2026 • Assignment 05 • Dr. Sabouni, Rami • Carleton University_
+_SYSC3303 • A6W2026 • Assignment 05 • Dr. Sabouni, Rami • Carleton University_
 
-The analysis assumes a single‑processor, fully preemptive system with periodic tasks released synchronously at $t = 0$, deadlines equal to periods, zero scheduling overhead, and no resource sharing or blocking.
+**Student**: Lavji, Fareen<br>
+**Student Number**: xxxxxx543
 
-Time units are abstract scheduling units; idle intervals are shown explicitly.
+_The analysis assumes a single‑processor, fully preemptive system with periodic tasks released synchronously at t = 0, deadlines equal to periods, zero scheduling overhead, and no resource sharing or blocking._<br>
+_Time units are abstract scheduling units; idle intervals are shown explicitly._
 
 ## System 01
 ### Task set
@@ -49,14 +51,15 @@ gantt
     P3: 19, 20
 ```
 ### Deadline Check
-| Process | Deadline  | Completion |
-| ------- | --------- | ---------- |
-| P1      | 8, 16, 24 | 3, 11, 19  |
-| P2      | 12, 24    | 7, 16      |
-| P3      | 20        | 20         |
+| Process | Deadline  | Completion | Deadlines Met? |
+| ------- | --------- | ---------- | -------------- |
+| P1      | 8, 16, 24 | 3, 11, 19  |       Yes      |
+| P2      | 12, 24    | 7, 16      |       Yes      |
+| P3      | 20        | 20         |       Yes      |
 
 **All deadlines met**.
 
+---
 ## System 02
 #### Task Set
 | Process | Period | C  | RMS Priority |
@@ -65,22 +68,21 @@ gantt
 | P6      | 25     | 10 | Middle (M)   |
 | P4      | 100    | 15 | Lowest (L)   |
 ### Processor Utilization
-Utilization per process:
-
-$$U_5 = 1 / 5 = 0.2000$$
-$$U_6 = 10 / 25 = 0.4000$$
-$$U_4 = 15 / 100 = 0.1500$$
+Utilization per process:<br>
+- $U_5 = \frac{1}{5} = 0.2000$
+- $U_6 = \frac{10}{25} = 0.4000$
+- $U_4 = \frac{15}{100} = 0.1500$
 
 Total Utilization:
 
 $$U_{total} = \sum \frac{C_i}{T_i} = 0.2000 + 0.4000 + 0.1500 = 0.7500$$
+
 ### Will Deadlines Be Met?
 #### Liu–Layland bound for 3 tasks
 $$U_{LL} = 3(2^{1/3} - 1) \approx 0.779$$
-
 $$U_{total} = 0.7500 < 0.779$$
 
-The task set **passes** the utilization test ∴ **all deadlines are guaranteed to be met under RMS**.
+The task set **passes** the utilization test therefore **all deadlines are guaranteed to be met under RMS**.
 ### Timeline Construction
 | Time Interval | Task | Reason                      |
 |---------------|------|-----------------------------|
@@ -150,6 +152,7 @@ gantt
 
 **All deadlines met**.
 
+---
 ## System 03
 ### Task Set
 | Process | Period | C  | RMS Priority |
@@ -158,9 +161,9 @@ gantt
 | P8      | 40     | 10 | Middle (M)   |
 | P7      | 70     | 30 | Lowest (L)   |
 ### Utilization Test Limits
-$$U = 30/70 + 10/40 + 5/20 = 0.4286 + 0.2500 + 0.2500 = \boxed{0.9286}$$
+$$U = \frac{30}{70} + \frac{10}{40} + \frac{5}{20} = 0.4286 + 0.2500 + 0.2500 = \boxed{0.9286}$$
 
-Liu–Layland bound for 3 tasks ≈ **0.779** ∴ fails utilization test but LL test is **sufficient, not necessary**.
+Liu–Layland bound for 3 tasks ≈ **0.779** therefore fails utilization test but the LL test is **sufficient, not necessary**.
 #### Timeline Construction
 | Time Interval | Task | Reason           |
 | ------------- | ---- | ---------------- |
@@ -201,10 +204,10 @@ gantt
     P7: 55, 70
 ```
 #### Deadline Check
-| Process | Deadline   | Completion |
-| ------- | ---------- | ---------- |
-| P9      | 20, 40, 60 | 5, 25, 45  |
-| P8      | 40, 80     | 15, 55     |
-| P7      | 70         | 70         |
+| Process | Deadline   | Completion | Deadlines Met ? |
+| ------- | ---------- | ---------- | --------------- |
+| P9      | 20, 40, 60 | 5, 25, 45  |       Yes       |
+| P8      | 40, 80     | 15, 55     |       Yes       |
+| P7      | 70         | 70         |       Yes       |
 
 **All deadlines met** despite **failing LL bound**.
