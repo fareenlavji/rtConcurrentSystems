@@ -211,3 +211,48 @@ gantt
 | P7      | 70         | 70         |       Yes       |
 
 **All deadlines met** despite **failing LL bound**.
+
+## Generalized Utilization Bound Theorem (GUBT)
+| Task | Period (Tᵢ) | Execution Time (Cᵢ) |
+|------|-------------|---------------------|
+| T1   | 108         | 12                  |
+| T2   | 125         | 30                  |
+| T3   | 175         | 25                  |
+| T4   | 290         | 35                  |
+| Ta   | 200         | 10                  |
+### Task Set and Priority Order
+Tasks **T1–T4** are scheduled using **Rate Monotonic Scheduling (RMS)** (shorter period ⇒ higher priority).<br>
+Task **Ta** has the **highest priority** and is ​**not scheduled using RMS**​.<br>
+Priority order: ${Ta} > {T1} > {T2} > {T3} > {T4}$
+### Generalized Utilization Bound Theorem (Formal Equations)
+For a task T_i with period T_i and execution time C_i:
+- **Factor 1**: Interference from higher‑priority tasks with shorter periods → $I_i^{(1)} = \sum_{j \in hp_s(i)} \frac{C_j}{T_i}$
+- **Factor 2**: Task’s own execution utilization → $I_i^{(2)} = U_i = \frac{C_i}{T_i}$
+- **Factor 3**: Interference from higher‑priority tasks with longer periods (once) → $I_i^{(3)} = \sum_{j \in hp_l(i)} \frac{C_j}{T_i}$
+- **Factor 4**: Blocking by lower‑priority tasks → $I_i^{(4)} = \frac{\max\limits_{k \in lp(i)} C_k}{T_i}$
+- **Total Utilization / Interference for Task T<sub>i</sub>** → $I_i = I_i^{(1)} + I_i^{(2)} + I_i^{(3)} + I_i^{(4)}$
+- **Schedulability Condition** → $I_i \le 1$
+
+**Notation**:
+
+$$
+\begin{aligned}
+hp_s(i) &: \text{ higher‑priority tasks with } T_j < T_i \\
+hp_l(i) &: \text{ higher‑priority tasks with } T_j \ge T_i \\
+lp(i) &: \text{ lower‑priority tasks than } T_i
+\end{aligned}
+$$
+
+### Computed Factors and Total Utilization
+|  Task  | Factor 1 | Factor 2 | Factor 3 | Factor 4 | **Total Util** |
+| ------ | -------- | -------- | -------- | -------- | -------------- |
+| **Ta** |  0.0000  |  0.0500  |  0.0000  |  0.0000  |   **0.0500**   |
+| **T1** |  0.0000  |  0.1111  |  0.0926  |  0.3241  |   **0.5278**   |
+| **T2** |  0.0960  |  0.2400  |  0.0800  |  0.2800  |   **0.6960**   |
+| **T3** |  0.2400  |  0.1429  |  0.0571  |  0.2000  |   **0.6400**   |
+| **T4** |  0.2310  |  0.1207  |  0.0000  |  0.0000  |   **0.3517**   |
+### Schedulability Result
+- **Schedulable under GUBT**: Ta, T1
+- **Not schedulable under GUBT**: T2, T3, T4
+
+Although Tasks **T2, T3, and T4** have total utilization values less than 1, they are considered **not schedulable** due to the **pessimistic blocking term (Factor 4)** imposed by lower‑priority tasks.
