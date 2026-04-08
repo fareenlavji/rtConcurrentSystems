@@ -9,11 +9,17 @@
  * Carleton University
  * @version 1.0, January 07th, 2025
  * @version 2.0, January 10th, 2026
+ *
+ * @author Lavji, F
+ * @version 2.1, March 14, 2026
  */
 
 public class Technician implements Runnable {
-    private AssemblyTable assemblyTable;                //The common table between Agent and Technicians
-    private Components components;      //The only component each instance of Technician has an infinite supply of (this component is different between all three Technicians)
+    private AssemblyTable assemblyTable; //The common table between Agent and Technicians
+    private Components components; //The only component each instance of Technician has an infinite supply of (this component is different between all three Technicians)
+
+    // NEW --> Addition of Event Logger (Assignment04_Requirement01)
+    private final EventLogger logger = EventLogger.getInstance();
 
     /**
      * Constructor for Technician
@@ -27,19 +33,40 @@ public class Technician implements Runnable {
     }
 
     /**
-     * Method used for each Technician thread when ran
+     * Method used for each Technician thread when ran.
      */
     public void run(){
+        String name = Thread.currentThread().getName();
+        logger.logEvent(name, "THREAD_START", "Technician with infinite " + components);
+
         System.out.println("[" + Thread.currentThread().getName() + "] Waiting for remaining components...");
-        while (this.assemblyTable.getDronesAssembled() != 20){   //Will loop until 20 drones have been assembled
-            this.assemblyTable.getComponents(this.components); //Attempts to obtain the missing components for the Technician (if obtained, drone is assembled)
-            // Sleep for a random time between 0 and 5 seconds to simulate assembly time
+
+        // Loop until MAX_DRONES have been assembled
+        while (this.assemblyTable.getDronesAssembled() != this.assemblyTable.getMaxDrones()) {
+
+            long startAttempt = System.currentTimeMillis();
+
+            //Attempts to obtain the missing components for the Technician (if obtained, drone is assembled)
+            logger.logEvent(name, "RETRIEVING_COMPONENT");
+            this.assemblyTable.getComponents(this.components);
+
+            // Sleep for between 0 and 5 seconds before calculating n!
             try {
+                logger.logEvent(name, "WORK_START");
                 Thread.sleep((int)(Math.random() * 5000));
+                logger.logEvent(name, "WORK_END");
             } catch (InterruptedException e) {}
+
+            // NEW --> Metric Analysis (Assignment04_Requirement03)
+            long endAttempt = System.currentTimeMillis();
+            long responseTime = endAttempt - startAttempt;
+            logger.logEventKV(name, "RESPONSE_TIME", "duration", String.valueOf(responseTime));
         }
 
         //All drones have been assembled
-        System.out.println("[" + Thread.currentThread().getName() + "] 20 drones assembled, ending...");
+        logger.logEvent(name, "THREAD_END",
+                String.format("%d drones assembled, ending...", this.assemblyTable.getMaxDrones()));
+        System.out.println(String.format("[%s] %d drones assembled, ending...",
+                Thread.currentThread().getName(), this.assemblyTable.getMaxDrones()));
     }
 }

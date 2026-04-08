@@ -12,45 +12,70 @@
  * Carleton University
  * @version 1.0, January 07th, 2025
  * @version 2.0, January 10th, 2026
+ *
+ * @author Lavji, F
+ * @version 2.1, March 14, 2026
  */
 public class AssemblyTable {
-    private final int SIZE = 2;                                 //Capacity of table
-    private Components[] components = new Components[SIZE];     //List of components on the table
-    private boolean tableFull = false;                          //True if there is at least 1 component on the table
-    private int dronesMade = 0;                                  //Running total of drones assembled
+    private final int SIZE = 2; //Capacity of table
+    private static final int MAX_DRONES = 20;
+    private Components[] components = new Components[SIZE]; //List of components on the table
+    private boolean tableFull = false; //True if there is at least 1 component on the table
+    private int dronesMade = 0; //Running total of drones assembled
+
+    // NEW --> Addition of Event Logger (Assignment04_Requirement01)
+    private final EventLogger logger = EventLogger.getInstance();
 
     /**
-     * Method used to allow an Agent to place components on the table when table is empty
+     * Method used to allow an Agent to place components on the table when table is empty.
+     *
      * @param components1   First component to be placed by Agent
      * @param components2   Second component to be placed by Agent
      */
     public synchronized void addComponents(Components components1, Components components2) {
-        while (tableFull) { //Makes agent wait until table is empty to place components
-            if (this.dronesMade == 20){ //Will exit if no more drones are required to be assembled
-                return;
-            }
+        //Make agent wait until table is empty to place components
+        while (tableFull) {
+            logger.waitStart(Thread.currentThread().getName());
+
+            //Exit if no more drones are required to be assembled
+            if (this.dronesMade == MAX_DRONES){ return; }
+
             try {
                 wait(); //Tells agent to wait until notified
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                logger.waitEnd(Thread.currentThread().getName());
+            } catch (InterruptedException e) { e.printStackTrace(); }
         }
-        if (this.dronesMade == 20){ //Will exit if no more drones are required to be assembled
-            return;
-        }
+
+        //Exit if no more drones are required to be assembled
+        if (this.dronesMade == MAX_DRONES){ return; }
 
         //Components are placed on table
         components[0] = components1;
         components[1] = components2;
+        logger.logEventKV(Thread.currentThread().getName(), "PLACED_COMPONENTS",
+                "components", "[" + components1 + "," + components2 + "]",
+                "drones", String.valueOf(dronesMade));
+
 
         // Random delay to simulate real scenario
         try {
+            logger.logEvent(Thread.currentThread().getName(), "WORK_START");
             Thread.sleep((int)(Math.random() * 1000));
+            logger.logEvent(Thread.currentThread().getName(), "WORK_END");
         } catch (InterruptedException e) {}
 
         tableFull = true;   //Table is now full
-        System.out.println("[" + Thread.currentThread().getName() + "] " + components1.toString() + " and " + components2.toString() + " placed on the table.");
-        notifyAll();    //Notify all Technicians that table is full
+        logger.logEventKV(Thread.currentThread().getName(), "TABLE_FULL",
+                "components", "[" + components1 + "," + components2 + "]",
+                "drones", String.valueOf(dronesMade));
+
+        System.out.println("[" + Thread.currentThread().getName() + "] "
+                + components1.toString() + " and "
+                + components2.toString() + " placed on the table.");
+
+        // Notify all Technicians that table is full
+        logger.logEvent(Thread.currentThread().getName(), "READY");
+        notifyAll();
     }
 
     /**
@@ -58,47 +83,60 @@ public class AssemblyTable {
      *
      * @param components    The component the Technician has an infinite supply of (Used to determine if Technician is eligible to take the components on the table)
      */
-    public synchronized void getComponents(Components components)
-    {
-        while (!tableFull || componentsContains(components)) { //Makes Technician wait until the table is full and until the two required components from the Agent is available
-            if (this.dronesMade == 20){ //If 20 drones have been assembled, do not assemble another
-                return;
-            }
+    public synchronized void getComponents(Components components) {
+
+        //Makes Technician wait until the table is full or until the two required components from the Agent is available
+        while (!canTake(components)) {
+            //If MAX_DRONES have been assembled, do not assemble another
+            if (this.dronesMade == MAX_DRONES){ return; }
+
             try {
+                logger.waitStart(Thread.currentThread().getName());
                 wait(); //Make the Technician wait until notified that new components are available
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                logger.waitEnd(Thread.currentThread().getName());
+            } catch (InterruptedException e) { e.printStackTrace(); }
         }
+
+        logger.logEventKV(Thread.currentThread().getName(), "PICKED_UP",
+                "components", "[" + this.components[0] + "," + this.components[1] + "]",
+                "drones", String.valueOf(dronesMade));
+
 
         System.out.println("[" + Thread.currentThread().getName() + "] Drone assembled.");
         System.out.println("[" + Thread.currentThread().getName() + "] Waiting for remaining components...");
         this.dronesMade++;  //Increase running total of drones assembled
+        logger.logEventKV(Thread.currentThread().getName(), "DRONE_ASSEMBLED", "drones", String.valueOf(dronesMade));
         System.out.println("[Counter] Drones assembled: " + this.dronesMade);
         System.out.println("--------------------------------------------------------------");
         //Clear components and set table to empty
         this.components[0] = null;
         this.components[1] = null;
         tableFull = false;
+        logger.logEventKV(Thread.currentThread().getName(), "TABLE_EMPTY", "drones", String.valueOf(dronesMade));
 
         // Random delay to simulate real scenario
         try {
+            logger.logEvent(Thread.currentThread().getName(), "WORK_START");
             Thread.sleep((int)(Math.random() * 1000));
+            logger.logEvent(Thread.currentThread().getName(), "WORK_END");
         } catch (InterruptedException e) {}
 
-        notifyAll();    //Notify Technicians and Agent that components have changed
+        logger.logEvent(Thread.currentThread().getName(), "READY");
+        notifyAll(); //Notify Technicians and Agent that components have changed
     }
 
     /**
-     * Method used to check if the component given is one of the two components on the table
+     * Method used to check if the component given is one of the two components on the table.
      *
-     * @param components    Component from Technician (used to check if Technician can accept the components on the table)
-     * @return True if component is on the table, false otherwise
+     * @param techOwns    Component from Technician (to check if Technician can accept the components on the table)
+     * @return            True if component is on the table, false otherwise.
      */
-    private boolean componentsContains (Components components){
-        //If there are no components on the table, or one of the components on the table is the same as the component given from the Technician, return True; false otherwise
-        return (this.components[0] == null || this.components[1] == null || (this.components[0] == components || this.components[1] == components));
+    private boolean canTake(Components techOwns) {
+        if (!tableFull) return false;
+        if (this.components[0] == null || this.components[1] == null) return false;
+        return (this.components[0] != techOwns && this.components[1] != techOwns);
     }
+
 
     /**
      * Getter method for getDronesMade.
@@ -108,6 +146,13 @@ public class AssemblyTable {
     public int getDronesAssembled(){
         return this.dronesMade;
     }
+
+    /**
+     * Returns the maximum number of drones needed for the job to complete.
+     *
+     * @return The maximum number of drones for job completion.
+     */
+    public int getMaxDrones() { return MAX_DRONES; }
 
     /**
      * Method used to create new Technician threads; keeps consistency of naming conventions between threads
@@ -125,21 +170,66 @@ public class AssemblyTable {
      *
      * @param args
      */
-    public static void main (String[] args){
+    public static void main(String[] args) {
+        // Threads for each Technician and the Agent
+        Thread techFrame, techProp, techCtrl, agent;
 
-        Thread TechnicianFrame, TechnicianPropulsion, TechnicianControl, agent;  //Threads for each Technician and the Agent
-        AssemblyTable assemblyTable;                                            //Table
+        // Common table for all threads
+        AssemblyTable assemblyTable = new AssemblyTable();
 
-        assemblyTable = new AssemblyTable();                                                //Common Table for all Technicians and Agent
-        agent = new Thread(new Agent(assemblyTable), "Agent");                //Agent thread created
-        TechnicianFrame = makeNewTechnician(assemblyTable, Components.Frame);             //Beans Technician created
-        TechnicianPropulsion = makeNewTechnician(assemblyTable, Components.PropulsionUnit);             //Water Technician created
-        TechnicianControl = makeNewTechnician(assemblyTable, Components.ControlFirmware);             //Sugar Technician created
+        // Start the logger (daemon flusher inside)
+        EventLogger logger = EventLogger.getInstance();
 
-        //Start all Technician and Agent threads
-        TechnicianFrame.start();
-        TechnicianPropulsion.start();
-        TechnicianControl.start();
+
+        // Create file with standardized naming
+        String runId = java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String logFile = "assembly_log_" + runId + ".txt";
+        logger.setLogFileName(logFile);
+        logger.setFlushIntervalMs(250L);
+
+        logger.start(); // background daemon flusher
+        // System-wide lifecycle anchors for analyzer
+        logger.logEventKV("AssemblyLine", "SYSTEM_START", "drones", "0");
+        logger.logEventKV("AssemblyLine", "ASSEMBLY_TABLE_READY", "drones", "0");
+
+        // Create threads with clear names (you already do this in makeNewTechnician)
+        agent     = new Thread(new Agent(assemblyTable), "Agent");
+        techFrame = makeNewTechnician(assemblyTable, Components.Frame);
+        techProp  = makeNewTechnician(assemblyTable, Components.PropulsionUnit);
+        techCtrl  = makeNewTechnician(assemblyTable, Components.ControlFirmware);
+
+        // Check-in logs before starting threads
+        logger.logEventKV("AssemblyLine", "FRAME_TECH_CHECKIN", "drones", "0");
+        techFrame.start();
+        logger.logEventKV("AssemblyLine", "PROPULSION_TECH_CHECKIN", "drones", "0");
+        techProp.start();
+        logger.logEventKV("AssemblyLine", "CONTROL_TECH_CHECKIN", "drones", "0");
+        techCtrl.start();
+        logger.logEventKV("AssemblyLine", "AGENT_CHECKIN", "drones", "0");
         agent.start();
+
+        // Wait for completion
+        try {
+            agent.join();
+            techFrame.join();
+            techProp.join();
+            techCtrl.join();
+        } catch (InterruptedException e) { e.printStackTrace(); }
+
+        // Completion summary and SYSTEM_END
+        logger.logEventKV("AssemblyLine", "JOB_COMPLETED", "drones", String.valueOf(assemblyTable.getDronesAssembled()));
+        logger.logEventKV("AssemblyLine", "SYSTEM_END", "drones", String.valueOf(assemblyTable.getDronesAssembled()));
+
+        // Stop logger and flush remaining records
+        logger.stop();
+        System.out.println("All threads finished; system terminated.");
+
+
+        // Run the analyzer AFTER logs are fully flushed (prints to console AND writes metrics.txt)
+        try {
+            LogAnalyzer.main(new String[]{ logFile });
+            System.out.println("Metrics written to metrics.txt");
+        } catch (Exception e) { e.printStackTrace(); }
     }
 }
